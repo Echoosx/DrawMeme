@@ -91,7 +91,7 @@ suspend fun blackWhite(text: String, image: ByteArray, _filter: String): ByteArr
     val h = codec.height
     val w = codec.width
     val blank = text.isBlank()
-    val foo = h / 6
+    val foo = h / 8
 
     val surface = Surface.makeRaster(ImageInfo(codec.colorInfo, w, h + if (blank) 0 else (foo * 1.4f).toInt()))
 
