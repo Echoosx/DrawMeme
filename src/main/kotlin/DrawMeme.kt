@@ -13,12 +13,15 @@ import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.data.*
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
+import net.mamoe.mirai.message.nextMessageOrNull
 import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import net.mamoe.mirai.utils.info
+import org.jetbrains.skia.paragraph.ParagraphBuilder
 import org.laolittle.plugin.draw.Emoji.EmojiUtil.fullEmojiRegex
 import org.laolittle.plugin.draw.Emoji.EmojiUtil.toEmoji
 import org.laolittle.plugin.draw.custom.initCustomMemes
 import org.laolittle.plugin.draw.meme.*
+import org.laolittle.plugin.draw.meme.Message
 import org.laolittle.plugin.sendImage
 import org.laolittle.plugin.toExternalResource
 import org.jetbrains.skia.Image as SkImage
@@ -172,12 +175,12 @@ object DrawMeme : KotlinPlugin(
                 patpat(image!!, delay).bytes.toExternalResource("GIF").use { subject.sendImage(it) }
             }
 
-            /*startsWith("#ctl") {
+            startsWith("#msg") {
                 val forward = nextMessageOrNull(30_000) {
                     message.contains(ForwardMessage)
                 }?.firstIsInstanceOrNull<ForwardMessage>() ?: return@startsWith
 
-                var hito = mutableSetOf<Long>()
+                val hito = mutableSetOf<Long>()
                 val nick = forward.title.contains("群聊")
 
                 val image = MessageImage()
@@ -211,7 +214,7 @@ object DrawMeme : KotlinPlugin(
                 }
 
                 subject.sendImage(image.makeImage())
-            }*/
+            }
 
             finding(erodeReg) {
                 val image = getOrWaitImage() ?: return@finding

@@ -20,12 +20,12 @@ import org.laolittle.plugin.draw.makeFromImage
 import org.laolittle.plugin.usedBy
 import org.jetbrains.skia.Image as SkImage
 
-private val msgFont = Fonts["MiSans-Regular", 35f] usedBy "消息图片"
+private val msgFont = Fonts["MiSans-Normal", 33f] usedBy "消息图片"
 
 val paraStyle = ParagraphStyle().apply {
     textStyle = TextStyle().apply {
-        fontSize = 55f
-        color = Color.WHITE
+        fontSize = 50f
+        color = Color.makeRGB(33,33,33)
         typeface = msgFont.typefaceOrDefault
     }
 }
@@ -125,7 +125,7 @@ class MessageImageNode(
             if (null != nick) {
                 val nickText = TextLine.make(nick, msgFont)
 
-                drawTextLine(nickText, 5f, 25f, Paint().apply { color = Color.MAGENTA })
+                drawTextLine(nickText, 5f, 25f, Paint().apply { color = Color.makeRGB(150,150,150) })
                 translate(0f, 40f)
             }
 
@@ -141,13 +141,17 @@ class MessageImageNode(
             } else {
                 val rad = 20f
 
-                drawCircle(0f, AVATAR_SIZE / 5, rad, Paint())
+                drawCircle(0f, AVATAR_SIZE / 5, rad, Paint().apply {
+                    color = Color.WHITE
+                })
                 drawCircle(-rad / 2 + 2, 5f, 20f, Paint().apply {
                     color = 0
                     blendMode = BlendMode.SRC
                 })
 
-                drawRRect(RRect.makeLTRB(0f, 0f, widthBox + PADDING * 2, heightBox + PADDING * 2, 33f), Paint())
+                drawRRect(RRect.makeLTRB(0f, 0f, widthBox + PADDING * 2, heightBox + PADDING * 2, 33f), Paint().apply {
+                    color = Color.WHITE
+                })
 
                 translate(PADDING, PADDING - 10)
                 messages.forEach { m ->
@@ -202,13 +206,22 @@ class MessageImage : MutableList<MessageImageNode> by mutableListOf() {
             height += it.height + 100
         }
 
-        return Surface.makeRasterN32Premul(1170, height.toInt()).apply {
+        val msg =  Surface.makeRasterN32Premul(1170, height.toInt()).apply {
             canvas.apply {
                 translate(0f, 40f)
                 forEach {
                     it.drawTo(this)
                     translate(0f, it.height + 100)
                 }
+            }
+        }.makeImageSnapshot()
+
+        val w = msg.width
+        val h = msg.height + 50
+        return Surface.makeRasterN32Premul(w,h).apply {
+            canvas.apply {
+                drawRect(Rect(0f,0f,w.toFloat(),h.toFloat()),Paint().apply { color = Color.makeRGB(233,236,243) })
+                drawImage(msg,0f,0f)
             }
         }.makeImageSnapshot()
     }
