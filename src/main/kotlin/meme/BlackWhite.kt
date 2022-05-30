@@ -69,10 +69,10 @@ internal val customFilter by lazy {
 }
 private val defaultFilter = ColorFilter.makeMatrix(
         ColorMatrix(
-            0.33F, 0.38F, 0.29F, 0F, 0F,
-            0.33F, 0.38F, 0.29F, 0F, 0F,
-            0.33F, 0.38F, 0.29F, 0F, 0F,
-            0.33F, 0.38F, 0.29F, 1F, 0F,
+            1F, 0F, 0F, 0F, 0F,
+            0F, 1F, 0F, 0F, 0F,
+            0F, 0F, 1F, 0F, 0F,
+            0F, 0F, 0F, 0F, 1F,
         )
     )
 
