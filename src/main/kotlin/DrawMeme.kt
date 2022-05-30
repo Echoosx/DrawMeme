@@ -232,6 +232,17 @@ object DrawMeme : KotlinPlugin(
                 val file = getEmojiMix(first, second) ?: getEmojiMix(second, first) ?: return@finding
                 file.toExternalResource("png").use { e -> subject.sendImage(e) }
             }
+
+            // 狂粉
+            startsWith("#love ") { str ->
+                if(str.isBlank())
+                    return@startsWith
+                val content = str.replace("[图片]","").replace("[动画表情]","")
+
+                loveBuilder(content).makeImageSnapshot().toExternalResource().use {
+                    subject.sendImage(it)
+                }
+            }
         }
     }
 }
