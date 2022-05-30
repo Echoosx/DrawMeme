@@ -8,6 +8,7 @@ import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.contact.Contact.Companion.sendImage
 import net.mamoe.mirai.contact.nameCardOrNick
 import net.mamoe.mirai.event.EventPriority
+import net.mamoe.mirai.event.events.MemberJoinEvent
 import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.data.*
@@ -44,7 +45,8 @@ object DrawMeme : KotlinPlugin(
         val erodeReg = Regex("""^#erode ?(\d*) ?(\d*)""")
         val emojiReg = Regex("""^($fullEmojiRegex) *($fullEmojiRegex)$""")
 
-        globalEventChannel().subscribeGroupMessages(
+        val eventChannel = globalEventChannel()
+        eventChannel.subscribeGroupMessages(
             priority = EventPriority.NORMAL
         ) {
             startsWith("#ph") { str ->
@@ -243,6 +245,13 @@ object DrawMeme : KotlinPlugin(
                     subject.sendImage(it)
                 }
             }
+        }
+
+        // 入群欢迎
+        eventChannel.subscribeAlways<MemberJoinEvent>{
+            val bytes = httpClient.get<ByteArray>(member.avatarUrl)
+            val image = SkImage.makeFromEncoded(bytes)
+            patpat(image, 0.02).bytes.toExternalResource("GIF").use { group.sendImage(it) }
         }
     }
 }
