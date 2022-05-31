@@ -87,7 +87,7 @@ object DrawMeme : KotlinPlugin(
              * kotlin ver made by @cssxsh
              * @author yurafuca
              */
-            finding(choReg) Five@{ result ->
+            /*finding(choReg) Five@{ result ->
                 /*val processed = message.firstIsInstanceOrNull<At>()?.let {
                     subject[it.target]?.nameCardOrNick?.let { card -> result.groupValues[1].replace("@${it.target}", card) }
                 } ?: result.groupValues[1]*/
@@ -107,7 +107,7 @@ object DrawMeme : KotlinPlugin(
 
                 val (top, bottom) = words
                 subject.sendImage(choyen(top, bottom))
-            }
+            }*/
 
             // 零溢事件
             finding(zeroReg) { r ->
@@ -167,7 +167,6 @@ object DrawMeme : KotlinPlugin(
                             image = SkImage.makeFromEncoded(this)
                         }
                     } ?: kotlin.run {
-                        subject.sendMessage("我不知道你要摸谁")
                         return@finding
                     }
                 }
@@ -247,6 +246,30 @@ object DrawMeme : KotlinPlugin(
                 loveBuilder(content).makeImageSnapshot().toExternalResource().use {
                     subject.sendImage(it)
                 }
+            }
+
+            // 假闪照
+            startsWith("#flash") {
+                val image = getOrWaitImage() ?: return@startsWith
+
+                subject.sendImage(flashImage(image.getBytes()))
+            }
+
+            // 大理石效果
+            startsWith("#marble") {
+                val skImage = SkImage.makeFromEncoded((getOrWaitImage() ?: return@startsWith).getBytes())
+
+                val s = it.split(' ')
+                fun getFloatOrNull(index: Int): Float? {
+                    return s.getOrNull(index)?.toFloatOrNull()
+                }
+
+                val foo = skImage.width / 10
+                val x = getFloatOrNull(0) ?: foo.toFloat()
+                val y = getFloatOrNull(1) ?: (foo / 10).toFloat()
+                val i = getFloatOrNull(2) ?: 1f
+
+                subject.sendImage(marble(skImage, MarbleFilter(x,y,i)).use { bitmap -> SkImage.makeFromBitmap(bitmap) })
             }
         }
 
